@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    
+  </head>
+  <body>
+      <div id="json"></div>
+  </body>
+</html>
+<script>
+  function createDom() {
+    const div = document.createElement("div");
+    div.innerHTML = `<div class="a-con" style="height: 700px;width:200px"><p><img src="https://t1.huanqiu.cn/ece91d88dde65ee2c72d77b102653c2c.png" alt=""></p><p>【环球网报道 记者 张骜】3月4日，外交部举行例行记者会，发言人陆慷就孟晚舟事件回应外媒记者提问。</p><p>记者：孟晚舟女士现在面临刑事诉讼的引渡程序，她的律师称，她在被捕时，权利没有得到保证，被询问了3个小时，中方对此有何评论？</p><p>陆慷：中国政府在这一问题上的立场非常清楚明确，美加两国滥用其双边引渡条约对中国公民任意采取强制措施，这是对中国公民合法权益的严重侵犯，我们再次敦促美方立即撤销对孟晚舟女士的逮捕令和引渡请求，敦促加方立即释放孟晚舟女士，让她平安回到中国并切实保障她的合法正当权益，避免错上加错。</p><div class="a-edit"><span class="a">责编：李林芝</span></div><div class="a-sign"><p>版权作品，未经环球网 huanqiu.com 书面授权，严禁转载，违者将被追究法律责任。</p></div><a href="javascript:void(0);" id="more">阅读全文<i class="iconfont icon-xiangxia-copy"></i></a></div>`;
+    return div.childNodes;
+  }
+
+  document.getElementById("json").innerHTML = JSON.stringify(
+    htmlToJson(createDom()),
+    0,
+    2
+  );
+
+  function htmlToJson(dom) {
+    const result = { node: "root", child: [] };
+    let doms = toArr(dom).length === 0 ? [dom] : toArr(dom);
+    if (doms.length === 1 && !doms[0].childNodes) {
+      return result;
+    }
+    for (let i = 0; i < doms.length; i++) {
+      const obj = {};
+      const el = doms[i];
+      obj.node = el.nodeType === 1 ? "element" : "text";
+      if (obj.node === "text") {
+        obj.node = "text";
+        obj.text = el.data;
+      } else {
+        obj.tag = el.tagName.toLocaleLowerCase();
+        const attrs = toArr(el.attributes);
+        if (attrs.length > 0) {
+          obj.attr = {};
+          attrs.map(it => {
+            if (it.name === "style") {
+              obj.attr["style"] = getStyle(el);
+            } else {
+              obj.attr[it.name] = it.nodeValue;
+            }
+          });
+        }
+        const child = toArr(el.childNodes);
+        if (child.length > 0) {
+          obj.child = parseHtml(el.childNodes).child;
+        }
+      }
+      result.child.push(obj);
+    }
+    return result;
+  }
+
+  function toArr(nodeList) {
+    return Array.prototype.slice.apply(nodeList);
+  }
+  function getStyle(el) {
+    const arr = toArr(el.style);
+    const result = [];
+    for (let i = 0; i < arr.length; i++) {
+      const obj = {};
+      obj[arr[i]] = el.style[arr[i]];
+      result.push(obj);
+    }
+    return result;
+  }
+</script>
