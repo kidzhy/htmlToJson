@@ -1,4 +1,4 @@
 # htmlToJson
 简易版
 
-![链接](https://kidzhy.github.io/htmlToJson/)
+[链接](https://kidzhy.github.io/htmlToJson/)
