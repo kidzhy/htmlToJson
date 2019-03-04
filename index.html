@@ -52,7 +52,7 @@
         }
         const child = toArr(el.childNodes);
         if (child.length > 0) {
-          obj.child = parseHtml(el.childNodes).child;
+          obj.child = htmlToJson(el.childNodes).child;
         }
       }
       result.child.push(obj);
